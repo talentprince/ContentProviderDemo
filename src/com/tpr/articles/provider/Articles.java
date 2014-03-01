@@ -1,4 +1,4 @@
-package com.tpr.provider.articles;
+package com.tpr.articles.provider;
 
 import android.net.Uri;
 
@@ -14,7 +14,7 @@ public class Articles {
     public static final String METHOD_GET_ITEM_COUNT = "METHOD_GET_ITEM_COUNT";
     public static final String KEY_ITEM_COUNT = "KEY_ITEM_COUNT";
 
-    public static final String AUTHORITY = "com.tpr.provider.articles";
+    public static final String AUTHORITY = "com.tpr.articles.provider";
 
     /*Match Code*/
     public static final int ITEM = 1;

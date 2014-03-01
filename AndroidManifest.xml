@@ -14,13 +14,23 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.tpr.cptest.MainActivity"
+            android:name="com.tpr.articles.cptest.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <provider
+            android:name="com.tpr.articles.provider.ArticlesProvider"
+            android:authorities="com.tpr.articles.provider"
+            android:label="@string/provider_label"
+            android:multiprocess="false" >
+        </provider>
+
+        <activity android:name="com.tpr.articles.cptest.ArticleActivity" >
         </activity>
     </application>
 
