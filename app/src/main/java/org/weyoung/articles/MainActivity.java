@@ -1,17 +1,19 @@
 package org.weyoung.articles;
 
-import android.os.Bundle;
-import android.os.Handler;
 import android.app.Activity;
+import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,8 +22,9 @@ import org.weyoung.articles.modle.Article;
 import org.weyoung.articles.modle.ArticlesManager;
 import org.weyoung.articles.provider.Articles;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements ArticlesManager.ArticleLoader{
     private static final String LOG_TAG = "org.weyoung.articles.MainActivity";
+
     private static final int ADD_ARTICLE_ACTIVITY = 1;
     private static final int EDIT_ARTICLE_ACTIVITY = 2;
 
@@ -29,22 +32,21 @@ public class MainActivity extends Activity {
     private ListView articleList = null;
     private ArticleObserver articleObserver = null;
     private Button button = null;
-    private ArticleAdapter adapter = null;
+
+    private LoaderManager loaderManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         articlesManager = new ArticlesManager(this);
-        adapter = new ArticleAdapter(this);
         articleList = (ListView) findViewById(R.id.listview_article);
-        articleList.setAdapter(adapter);
         articleList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), ArticleActivity.class);
-                Article article = articlesManager.getArticleByPosition(position);
+                Article article = (Article) articleList.getAdapter().getItem(position);
                 intent.putExtra(Articles.ID, article.getId());
                 intent.putExtra(Articles.TITLE, article.getTitle());
                 intent.putExtra(Articles.ABSTRACT, article.getAbs());
@@ -64,6 +66,9 @@ public class MainActivity extends Activity {
                 startActivityForResult(new Intent(getApplicationContext(), ArticleActivity.class), ADD_ARTICLE_ACTIVITY);
             }
         });
+
+        loaderManager = getLoaderManager();
+        loaderManager.initLoader(ArticlesManager.ARTICLES_GET, null, articlesManager);
     }
 
     @Override
@@ -109,6 +114,20 @@ public class MainActivity extends Activity {
         }
         }
     }
+
+    //==========================================
+    // Article Loader Callback
+    //==========================================
+    @Override
+    public void onArticlesLoad(Cursor cursor) {
+        ArticleAdapter adapter = new ArticleAdapter(this, cursor, true);
+        articleList.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
+    //========================================
+    // Provider Observer
+    //========================================
     private class ArticleObserver extends ContentObserver {
 
         public ArticleObserver(Handler handler) {
@@ -117,47 +136,52 @@ public class MainActivity extends Activity {
         @Override
         public void onChange(boolean selfChange) {
             super.onChange(selfChange);
-            adapter.notifyDataSetChanged();
+            loaderManager.getLoader(ArticlesManager.ARTICLES_GET).forceLoad();
         }
         
     }
 
-    private class ArticleAdapter extends BaseAdapter {
+    class ArticleAdapter extends CursorAdapter {
         private LayoutInflater inflater = null;
 
-        public ArticleAdapter(Context context) {
+        public ArticleAdapter(Context context, Cursor c, boolean autoRequery) {
+            super(context, c, autoRequery);
             inflater = LayoutInflater.from(context);
         }
 
         @Override
-        public int getCount() {
-            return articlesManager.getArticleCount();
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            View convertView = inflater.inflate(R.layout.item, parent, false);
+            populateView(convertView, cursor);
+            return convertView;
+        }
+
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+            populateView(view, cursor);
         }
 
         @Override
         public Object getItem(int position) {
-            return articlesManager.getArticleByPosition(position);
+            Cursor cursor = (Cursor) super.getItem(position);
+            int id = cursor.getInt(0);
+            String title = cursor.getString(1);
+            String abs = cursor.getString(2);
+            String url = cursor.getString(3);
+            return new Article(id, title, abs, url);
         }
 
-        @Override
-        public long getItemId(int position) {
-            return articlesManager.getArticleByPosition(position).getId();
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            Article article = articlesManager.getArticleByPosition(position);
-            if(convertView == null) {
-                convertView = inflater.inflate(R.layout.item, null);
-            }
-            TextView titleView = (TextView) convertView.findViewById(R.id.textview_article_title);
-            titleView.setText("Title: " + article.getTitle());
-            TextView absView = (TextView) convertView.findViewById(R.id.textview_article_abstract);
-            absView.setText("Abstract: " + article.getAbs());
-            TextView urlView = (TextView) convertView.findViewById(R.id.textview_article_url);
-            urlView.setText("URL: " + article.getUrl());
-
-            return convertView;
+        private void populateView(View view, Cursor cursor) {
+            String title = cursor.getString(1);
+            String abs = cursor.getString(2);
+            String url = cursor.getString(3);
+            TextView titleView = (TextView) view.findViewById(R.id.textview_article_title);
+            titleView.setText("Title: " + title);
+            TextView absView = (TextView) view.findViewById(R.id.textview_article_abstract);
+            absView.setText("Abstract: " + abs);
+            TextView urlView = (TextView) view.findViewById(R.id.textview_article_url);
+            urlView.setText("URL: " + url);
         }
     }
+
 }

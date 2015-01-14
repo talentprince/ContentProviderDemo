@@ -1,20 +1,21 @@
 package org.weyoung.articles.modle;
 
-import java.util.LinkedList;
-
-
+import android.app.LoaderManager;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 
 import org.weyoung.articles.provider.Articles;
 
-public class ArticlesManager {
-    private static final String LOG_TAG = "com.tpr.articles.ArticlesAdapter";
+public class ArticlesManager implements LoaderManager.LoaderCallbacks<Cursor>{
+    private static final String LOG_TAG = "org.weyoung.articles.ArticlesAdapter";
 
     private ContentResolver resolver = null;
     private String[] projection = new String[] {
@@ -23,8 +24,19 @@ public class ArticlesManager {
             Articles.ABSTRACT,
             Articles.URL
     };
+    private Context context;
+
+    public interface ArticleLoader {
+        void onArticlesLoad(Cursor cursor);
+    }
+
+    public static final int ARTICLES_GET = 007;
+
+    private ArticleLoader loader;
 
     public ArticlesManager(Context context) {
+        this.context = context;
+        this.loader = (ArticleLoader)context;
         resolver = context.getContentResolver();
     }
 
@@ -55,67 +67,35 @@ public class ArticlesManager {
 
     public boolean removeArticle(int id) {
         Uri uri = ContentUris.withAppendedId(Articles.CONTENT_URI, id);
-
         int count = resolver.delete(uri, null, null);
         return count > 0;
     }
 
-    public LinkedList<Article> getAllArticles() {
-        LinkedList<Article> articles = new LinkedList<Article>();
-
-        Cursor cursor = resolver.query(Articles.CONTENT_URI, projection, null, null, Articles.DEFUAL_SORT_ORDER);
-        if(cursor.moveToFirst()) {
-            do {
-                int id = cursor.getInt(0);
-                String title = cursor.getString(1);
-                String abs = cursor.getString(2);
-                String url = cursor.getString(3);
-                articles.add(new Article(id, title, abs, url));
-            } while (cursor.moveToNext());
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        CursorLoader loader = new CursorLoader(context);
+        switch (id) {
+            case ARTICLES_GET:
+                loader.setUri(Articles.CONTENT_URI);
+                loader.setProjection(projection);
+             break;
         }
-        cursor.close();
-        return articles;
+        return loader;
     }
 
-    public int getArticleCount() {
-        int count = 0;
-
-        Cursor cursor = resolver.query(Articles.CONTENT_URI, projection, null, null, Articles.DEFUAL_SORT_ORDER);
-        if(cursor.moveToFirst()) {
-            do {
-                count++;
-            } while (cursor.moveToNext());
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (this.loader == null)
+            return;
+        switch (loader.getId()) {
+            case ARTICLES_GET:
+                this.loader.onArticlesLoad(data);
+                break;
         }
-        cursor.close();
-        return count;
     }
 
-    public Article getArticleById(int id) {
-        Uri uri = ContentUris.withAppendedId(Articles.CONTENT_URI, id);
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
 
-        Cursor cursor = resolver.query(uri, projection, null, null, Articles.DEFUAL_SORT_ORDER);
-        if(!cursor.moveToFirst())
-            return null;
-
-        String title = cursor.getString(1);
-        String abs = cursor.getString(2);
-        String url = cursor.getString(3);
-        cursor.close();
-        return new Article(id, title, abs, url);
-    }
-
-    public Article getArticleByPosition(int pos) {
-        Uri uri = ContentUris.withAppendedId(Articles.CONTENT_POS_URI, pos);
-
-        Cursor cursor = resolver.query(uri, projection, null, null, Articles.DEFUAL_SORT_ORDER);
-        if(!cursor.moveToFirst())
-            return null;
-
-        int id = cursor.getInt(0);
-        String title = cursor.getString(1);
-        String abs = cursor.getString(2);
-        String url = cursor.getString(3);
-        cursor.close();
-        return new Article(id, title, abs, url);
     }
 }
