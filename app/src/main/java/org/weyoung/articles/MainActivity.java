@@ -122,7 +122,6 @@ public class MainActivity extends Activity implements ArticlesManager.ArticleLoa
     public void onArticlesLoad(Cursor cursor) {
         ArticleAdapter adapter = new ArticleAdapter(this, cursor, true);
         articleList.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
     }
 
     //========================================
