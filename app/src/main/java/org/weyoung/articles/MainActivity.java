@@ -31,8 +31,9 @@ public class MainActivity extends Activity implements ArticlesManager.ArticleLoa
     private ArticlesManager articlesManager = null;
     private ListView articleList = null;
     private ArticleObserver articleObserver = null;
-    private Button button = null;
+    private ArticleAdapter articleAdapter = null;
 
+    private Button button = null;
     private LoaderManager loaderManager;
 
     @Override
@@ -120,8 +121,12 @@ public class MainActivity extends Activity implements ArticlesManager.ArticleLoa
     //==========================================
     @Override
     public void onArticlesLoad(Cursor cursor) {
-        ArticleAdapter adapter = new ArticleAdapter(this, cursor, true);
-        articleList.setAdapter(adapter);
+        if(articleAdapter == null) {
+            articleAdapter = new ArticleAdapter(this, cursor, true);
+            articleList.setAdapter(articleAdapter);
+        }else {
+            articleAdapter.changeCursor(cursor);
+        }
     }
 
     //========================================
