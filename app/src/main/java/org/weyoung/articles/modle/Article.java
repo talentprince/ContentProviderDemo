@@ -1,4 +1,4 @@
-package com.tpr.articles;
+package org.weyoung.articles.modle;
 
 public class Article {
     private int id;

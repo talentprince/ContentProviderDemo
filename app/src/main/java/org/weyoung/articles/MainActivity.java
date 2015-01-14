@@ -1,9 +1,4 @@
-package com.tpr.articles.cptest;
-
-import com.tpr.articles.Article;
-import com.tpr.articles.ArticlesAdapter;
-import com.tpr.articles.provider.Articles;
-import com.tpr.cptest.R;
+package org.weyoung.articles;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,12 +16,16 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.weyoung.articles.modle.Article;
+import org.weyoung.articles.modle.ArticlesManager;
+import org.weyoung.articles.provider.Articles;
+
 public class MainActivity extends Activity {
-    private static final String LOG_TAG = "com.tpr.articles.cptest.MainActivity";
+    private static final String LOG_TAG = "org.weyoung.articles.MainActivity";
     private static final int ADD_ARTICLE_ACTIVITY = 1;
     private static final int EDIT_ARTICLE_ACTIVITY = 2;
 
-    private ArticlesAdapter aa = null;
+    private ArticlesManager articlesManager = null;
     private ListView articleList = null;
     private ArticleObserver articleObserver = null;
     private Button button = null;
@@ -36,7 +35,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        aa = new ArticlesAdapter(this);
+        articlesManager = new ArticlesManager(this);
         adapter = new ArticleAdapter(this);
         articleList = (ListView) findViewById(R.id.listview_article);
         articleList.setAdapter(adapter);
@@ -45,7 +44,7 @@ public class MainActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), ArticleActivity.class);
-                Article article = aa.getArticleByPosition(position);
+                Article article = articlesManager.getArticleByPosition(position);
                 intent.putExtra(Articles.ID, article.getId());
                 intent.putExtra(Articles.TITLE, article.getTitle());
                 intent.putExtra(Articles.ABSTRACT, article.getAbs());
@@ -89,7 +88,7 @@ public class MainActivity extends Activity {
                 String title = data.getStringExtra(Articles.TITLE);
                 String abs = data.getStringExtra(Articles.ABSTRACT);
                 String url = data.getStringExtra(Articles.URL);
-                aa.insertArticle(new Article(-1, title, abs, url));
+                articlesManager.insertArticle(new Article(-1, title, abs, url));
             }
             break;
         }
@@ -101,9 +100,9 @@ public class MainActivity extends Activity {
                     String title = data.getStringExtra(Articles.TITLE);
                     String abs = data.getStringExtra(Articles.ABSTRACT);
                     String url = data.getStringExtra(Articles.URL);
-                    aa.updateArticle(new Article(id, title, abs, url));
+                    articlesManager.updateArticle(new Article(id, title, abs, url));
                 }else {
-                    aa.removeArticle(id);
+                    articlesManager.removeArticle(id);
                 }
             }
             break;
@@ -132,22 +131,22 @@ public class MainActivity extends Activity {
 
         @Override
         public int getCount() {
-            return aa.getArticleCount();
+            return articlesManager.getArticleCount();
         }
 
         @Override
         public Object getItem(int position) {
-            return aa.getArticleByPosition(position);
+            return articlesManager.getArticleByPosition(position);
         }
 
         @Override
         public long getItemId(int position) {
-            return aa.getArticleByPosition(position).getId();
+            return articlesManager.getArticleByPosition(position).getId();
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            Article article = aa.getArticleByPosition(position);
+            Article article = articlesManager.getArticleByPosition(position);
             if(convertView == null) {
                 convertView = inflater.inflate(R.layout.item, null);
             }

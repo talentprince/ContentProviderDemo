@@ -1,8 +1,7 @@
-package com.tpr.articles;
+package org.weyoung.articles.modle;
 
 import java.util.LinkedList;
 
-import com.tpr.articles.provider.Articles;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -12,7 +11,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
-public class ArticlesAdapter {
+import org.weyoung.articles.provider.Articles;
+
+public class ArticlesManager {
     private static final String LOG_TAG = "com.tpr.articles.ArticlesAdapter";
 
     private ContentResolver resolver = null;
@@ -23,7 +24,7 @@ public class ArticlesAdapter {
             Articles.URL
     };
 
-    public ArticlesAdapter(Context context) {
+    public ArticlesManager(Context context) {
         resolver = context.getContentResolver();
     }
 

@@ -1,4 +1,4 @@
-package com.tpr.articles.provider;
+package org.weyoung.articles.provider;
 
 import android.net.Uri;
 
@@ -14,7 +14,7 @@ public class Articles {
     public static final String METHOD_GET_ITEM_COUNT = "METHOD_GET_ITEM_COUNT";
     public static final String KEY_ITEM_COUNT = "KEY_ITEM_COUNT";
 
-    public static final String AUTHORITY = "com.tpr.articles.provider";
+    public static final String AUTHORITY = "org.weyoung.articles.provider";
 
     /*Match Code*/
     public static final int ITEM = 1;
@@ -22,8 +22,8 @@ public class Articles {
     public static final int ITEM_POS = 3;
 
     /*MIME*/
-    public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.com.tpr.articles";
-    public static final String CONTENT_ITME_TYPE = "vnd.android.cursor.item/vnd.com.tpr.articles";
+    public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.org.weyoung.articles";
+    public static final String CONTENT_ITME_TYPE = "vnd.android.cursor.item/vnd.org.weyoung.articles";
 
     /*Content URI*/
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/item");
