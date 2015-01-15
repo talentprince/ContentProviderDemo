@@ -4,10 +4,8 @@ import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,7 +28,6 @@ public class MainActivity extends Activity implements ArticlesManager.ArticleLoa
 
     private ArticlesManager articlesManager = null;
     private ListView articleList = null;
-    private ArticleObserver articleObserver = null;
     private ArticleAdapter articleAdapter = null;
 
     private Button button = null;
@@ -56,9 +53,6 @@ public class MainActivity extends Activity implements ArticlesManager.ArticleLoa
             }
         });
 
-        articleObserver = new ArticleObserver(new Handler());
-        getContentResolver().registerContentObserver(Articles.CONTENT_URI, true, articleObserver);
-
         button = (Button) findViewById(R.id.button_add);
         button.setOnClickListener(new View.OnClickListener() {
             
@@ -70,12 +64,6 @@ public class MainActivity extends Activity implements ArticlesManager.ArticleLoa
 
         loaderManager = getLoaderManager();
         loaderManager.initLoader(ArticlesManager.ARTICLES_GET, null, articlesManager);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        getContentResolver().unregisterContentObserver(articleObserver);
     }
 
     @Override
@@ -127,22 +115,6 @@ public class MainActivity extends Activity implements ArticlesManager.ArticleLoa
         }else {
             articleAdapter.changeCursor(cursor);
         }
-    }
-
-    //========================================
-    // Provider Observer
-    //========================================
-    private class ArticleObserver extends ContentObserver {
-
-        public ArticleObserver(Handler handler) {
-            super(handler);
-        }
-        @Override
-        public void onChange(boolean selfChange) {
-            super.onChange(selfChange);
-            loaderManager.getLoader(ArticlesManager.ARTICLES_GET).forceLoad();
-        }
-        
     }
 
     class ArticleAdapter extends CursorAdapter {
