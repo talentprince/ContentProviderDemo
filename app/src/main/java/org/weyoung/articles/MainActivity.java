@@ -110,7 +110,7 @@ public class MainActivity extends Activity implements ArticlesManager.ArticleLoa
     @Override
     public void onArticlesLoad(Cursor cursor) {
         if(articleAdapter == null) {
-            articleAdapter = new ArticleAdapter(this, cursor, true);
+            articleAdapter = new ArticleAdapter(this, cursor, false);
             articleList.setAdapter(articleAdapter);
         }else {
             articleAdapter.changeCursor(cursor);
@@ -128,7 +128,6 @@ public class MainActivity extends Activity implements ArticlesManager.ArticleLoa
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             View convertView = inflater.inflate(R.layout.item, parent, false);
-            populateView(convertView, cursor);
             return convertView;
         }
 
