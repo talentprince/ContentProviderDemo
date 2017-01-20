@@ -125,7 +125,7 @@ public class ArticlesProvider extends ContentProvider {
             throw new IllegalArgumentException("Error Uri " + uri);
         }
 
-        Cursor cursor = sqlBuilder.query(db, projection, selection, selectionArgs, null, null, TextUtils.isEmpty(sortOrder) ? Articles.DEFUAL_SORT_ORDER :sortOrder, limit);
+        Cursor cursor = sqlBuilder.query(db, projection, selection, selectionArgs, null, null, TextUtils.isEmpty(sortOrder) ? Articles.DEFAULT_SORT_ORDER :sortOrder, limit);
         cursor.setNotificationUri(resolver, uri);
 
         return cursor;

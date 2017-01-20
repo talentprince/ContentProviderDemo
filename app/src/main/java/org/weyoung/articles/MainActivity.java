@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -20,7 +21,7 @@ import org.weyoung.articles.modle.Article;
 import org.weyoung.articles.modle.ArticlesManager;
 import org.weyoung.articles.provider.Articles;
 
-public class MainActivity extends Activity implements ArticlesManager.ArticleLoader{
+public class MainActivity extends AppCompatActivity implements ArticlesManager.ArticleLoader{
     private static final String LOG_TAG = "org.weyoung.articles.MainActivity";
 
     private static final int ADD_ARTICLE_ACTIVITY = 1;

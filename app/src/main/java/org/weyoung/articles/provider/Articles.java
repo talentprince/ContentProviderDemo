@@ -9,7 +9,7 @@ public class Articles {
     public static final String ABSTRACT = "_abstract";
     public static final String URL = "_url";
 
-    public static final String DEFUAL_SORT_ORDER = "_id asc";
+    public static final String DEFAULT_SORT_ORDER = "_id asc";
 
     public static final String METHOD_GET_ITEM_COUNT = "METHOD_GET_ITEM_COUNT";
     public static final String KEY_ITEM_COUNT = "KEY_ITEM_COUNT";

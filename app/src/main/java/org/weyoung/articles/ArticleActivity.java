@@ -3,6 +3,7 @@ package org.weyoung.articles;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -10,7 +11,7 @@ import android.widget.EditText;
 
 import org.weyoung.articles.provider.Articles;
 
-public class ArticleActivity extends Activity implements OnClickListener{
+public class ArticleActivity extends AppCompatActivity implements OnClickListener{
     private final static String LOG_TAG = "org.weyoung.articles.ArticleActivity";
 
     public final static String EDIT_ARTICLE_ACTION = "EDIT_ARTICLE_ACTION";
