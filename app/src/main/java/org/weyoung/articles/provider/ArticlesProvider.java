@@ -20,7 +20,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 public class ArticlesProvider extends ContentProvider {
-    private static final String LOG_TAG = "org.weyoung.articles.provider.ArticlesProvider";
+    private static final String LOG_TAG = "ArticlesProvider";
 
     private static final String DB_NAME = "Articles.db";
     private static final String DB_TABLE = "ArticlesTable";
